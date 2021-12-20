@@ -10,10 +10,12 @@ function calculateRow(row) {
     // calculating element "merges"
     var calculatedRow = [];
     var elemPointer = 0;
+    var totalScore = 0;
 
     while(elemPointer < filteredRow.length) {
         if(filteredRow[elemPointer] === filteredRow[elemPointer + 1]) {
             calculatedRow.push(filteredRow[elemPointer] + 1);
+            totalScore += Math.pow(2, filteredRow[elemPointer] + 1);
             //if merged with next element, skip it
             elemPointer += 1;
         } else {
@@ -28,5 +30,8 @@ function calculateRow(row) {
         calculatedRow.push(0);
     }
 
-    return calculatedRow;
+    return {
+        row: calculatedRow,
+        score: totalScore
+    }
 }

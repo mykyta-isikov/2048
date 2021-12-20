@@ -6,7 +6,8 @@ function MatrixModel() {
             [0, 0, 0, 0],
             [0, 0, 0, 0],
             [0, 0, 0, 0],
-        ]
+        ],
+        gameStatus: true
     }
     
     // singleton
@@ -26,64 +27,158 @@ MatrixModel.prototype.hey = function () {
         [0, 0, 0, 0],
         [0, 0, 0, 0],
     ];
+    this.attributes.gameStatus = true;
     this.createNewNumber();
     this.createNewNumber();
+
+    summaryModel = new SummaryModel();
+    summaryModel.attributes.totalScore = 0;
     this.publish('changeData');
 }
 
 MatrixModel.prototype.moveUp = function () {
+    if(!this.attributes.gameStatus) return;
+
     var newGrid = [];
-    var rotatedGrid = this.attributes.grid.rotateMatrix();
+    var rotatedGrid = this.attributes.grid.rotateMatrixCC();
+    var score = 0;
 
     rotatedGrid.forEach((row) => {
-        newGrid.push(calculateReverseRow(row));
-    })
+        calculatedRow = calculateRow(row)
+        score += calculatedRow['score'];
+        newGrid.push(calculatedRow['row']);
+    });
+    newGrid = newGrid.rotateMatrix();
 
-    newGrid = newGrid.rotateMatrixCC();
-
-    this.changeAndPublish(newGrid);
+    this.changeAndPublish(newGrid, score);
 }
 
 MatrixModel.prototype.moveRight = function () {
+    if(!this.attributes.gameStatus) return;
+
     var newGrid = [];
+    var rotatedGrid = this.attributes.grid.rotateMatrix().rotateMatrix();
+    var score = 0;
 
-    this.attributes.grid.forEach((row) => {
-        newGrid.push(calculateReverseRow(row));
-    })
+    rotatedGrid.forEach((row) => {
+        calculatedRow = calculateRow(row)
+        score += calculatedRow['score'];
+        newGrid.push(calculatedRow['row']);
+    });
+    newGrid = newGrid.rotateMatrix().rotateMatrix();
 
-    this.changeAndPublish(newGrid);
+    this.changeAndPublish(newGrid, score);
 }
 
 MatrixModel.prototype.moveDown = function () {
+    if(!this.attributes.gameStatus) return;
+
     var newGrid = [];
     var rotatedGrid = this.attributes.grid.rotateMatrix();
+    var score = 0;
 
     rotatedGrid.forEach((row) => {
-        newGrid.push(calculateRow(row));
-    })
-
+        calculatedRow = calculateRow(row)
+        score += calculatedRow['score'];
+        newGrid.push(calculatedRow['row']);
+    });
     newGrid = newGrid.rotateMatrixCC();
 
-    this.changeAndPublish(newGrid);
+    this.changeAndPublish(newGrid, score);
 }
 
 MatrixModel.prototype.moveLeft = function () {
+    if(!this.attributes.gameStatus) return;
+
     var newGrid = [];
+    var score = 0;
 
     this.attributes.grid.forEach((row) => {
-        newGrid.push(calculateRow(row));
-    })
+        calculatedRow = calculateRow(row)
+        score += calculatedRow['score'];
+        newGrid.push(calculatedRow['row']);
+    });
 
-    this.changeAndPublish(newGrid);
+    this.changeAndPublish(newGrid, score);
 }
 // Facade method
-MatrixModel.prototype.changeAndPublish = function (calculatedMatrix) {
+MatrixModel.prototype.changeAndPublish = function (calculatedMatrix, score) {
     var referenceString = this.attributes.grid.toString();
+    var summaryModel = new SummaryModel();
+    
+    // Publish changes if grid changed
     this.attributes.grid = calculatedMatrix;
     if (referenceString !== calculatedMatrix.toString()) {
+        summaryModel.attributes.totalScore += score;
+        if(score !== 0) summaryModel.render();
         this.createNewNumber();
+        this.publish('changeData');
     }
-    this.publish('changeData');
+
+    // Checking win/loss
+    if (this.checkWin()) {
+        this.endGame('Victory!');
+    } else if (!this.attributes.grid.checkZeroes()) {
+        if (this.checkLoss()) {
+            this.endGame('You\'ve lost...');
+        }
+    }
+}
+
+MatrixModel.prototype.checkWin = function () {
+    var i = 0;
+    var j;
+    for(; i < 4; i += 1) {
+        j = 0;
+        for(; j < 4; j += 1) {
+            if(this.attributes.grid[i][j] === 11) return true;
+        }
+    }
+    return false;
+}
+
+MatrixModel.prototype.checkLoss = function () {
+    var matrixGrid = [
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0]
+    ];
+
+    // Copying MatrixModel grid to new variable
+    var i = 0;
+    var j;
+    for(; i < 4; i += 1) {
+        j = 0;
+        for(; j < 4; j += 1) {
+            matrixGrid[i][j] = this.attributes.grid[i][j];
+        }
+    }
+
+    // Checking if possible moves exist
+    var score = 0;
+
+    matrixGrid.forEach((row) => {
+        calculatedRow = calculateRow(row)
+        score += calculatedRow['score'];
+    })
+    matrixGrid = matrixGrid.rotateMatrix();
+    matrixGrid.forEach((row) => {
+        calculatedRow = calculateRow(row)
+        score += calculatedRow['score'];
+    })
+
+    if (score > 0) return false;
+    return true;
+}
+
+MatrixModel.prototype.endGame = function (message) {
+    this.attributes.gameStatus = false;
+    console.log(message);
+    summaryModel = new SummaryModel();
+    if (summaryModel.attributes.totalScore > summaryModel.attributes.bestScore) {
+        summaryModel.attributes.bestScore = summaryModel.attributes.totalScore;
+    }
 }
 
 MatrixModel.prototype.createNewNumber = function () {
@@ -115,26 +210,3 @@ MatrixModel.prototype.createNewNumber = function () {
         this.attributes.grid[y][x] = 1;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// https://github.com/lorapalmer/2048
