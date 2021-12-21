@@ -30,10 +30,14 @@ MatrixModel.prototype.hey = function () {
     this.attributes.gameStatus = true;
     this.createNewNumber();
     this.createNewNumber();
-
-    summaryModel = new SummaryModel();
-    summaryModel.attributes.totalScore = 0;
     this.publish('changeData');
+
+    var summaryModel = new SummaryModel();
+    if (summaryModel.attributes.totalScore > summaryModel.attributes.bestScore) {
+        summaryModel.attributes.bestScore = summaryModel.attributes.totalScore;
+    }
+    summaryModel.attributes.totalScore = 0;
+    summaryModel.publish('changeScore');
 }
 
 MatrixModel.prototype.moveUp = function () {
@@ -110,7 +114,7 @@ MatrixModel.prototype.changeAndPublish = function (calculatedMatrix, score) {
     this.attributes.grid = calculatedMatrix;
     if (referenceString !== calculatedMatrix.toString()) {
         summaryModel.attributes.totalScore += score;
-        if(score !== 0) summaryModel.render();
+        if(score !== 0) summaryModel.publish('changeScore');
         this.createNewNumber();
         this.publish('changeData');
     }
@@ -175,7 +179,7 @@ MatrixModel.prototype.checkLoss = function () {
 MatrixModel.prototype.endGame = function (message) {
     this.attributes.gameStatus = false;
     console.log(message);
-    summaryModel = new SummaryModel();
+    var summaryModel = new SummaryModel();
     if (summaryModel.attributes.totalScore > summaryModel.attributes.bestScore) {
         summaryModel.attributes.bestScore = summaryModel.attributes.totalScore;
     }

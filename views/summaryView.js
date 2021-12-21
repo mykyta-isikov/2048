@@ -8,19 +8,19 @@ SummaryView.prototype = Object.create(BaseView.prototype);
 SummaryView.prototype.constructor = SummaryView;
 
 SummaryView.prototype.beforeRender = function () {
-    
+    this.summaryModel.subscribe('changeScore', this.reRender, this);
 }
 
 SummaryView.prototype.render = function () {
+    var editedTemplate = this.template;
     var attributes = this.summaryModel.attributes;
-    
+
     for(var prop in attributes) {
         if(attributes.hasOwnProperty(prop)) {
-            this.template = this.template.replace('{{' + prop + '}}', attributes[prop]);
+            editedTemplate = editedTemplate.replace('{{' + prop + '}}', attributes[prop]);
         }
     }
-    
-    return this.template;
+    return editedTemplate;
 }
 
 SummaryView.prototype.afterRender = function () {

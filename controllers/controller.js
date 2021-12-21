@@ -3,7 +3,6 @@ function Controller() {
 }
 
 Controller.prototype.onClickNewGame = function () {
-    console.log('clicked!');
     this.matrixModel.hey();
 }
 

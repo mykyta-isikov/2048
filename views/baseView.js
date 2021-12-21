@@ -25,7 +25,4 @@ BaseView.prototype.reRender = function () {
     this.afterUpdate();
 };
 
-BaseView.prototype.afterUpdate = function () {
-    var newGameBtn = document.getElementById('newGameBtn');
-    newGameBtn.addEventListener('click', this.controller.onClickNewGame.bind(this.controller));
-};
+BaseView.prototype.afterUpdate = function () {};

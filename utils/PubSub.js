@@ -7,7 +7,6 @@ PubSub.prototype.subscribe = function (event, handler, context) {
 }
 
 PubSub.prototype.publish = function (event, args) {
-    // console.log(this.subscribers, 'publish')
     this.subscribers.forEach(function (action) {
         if(action.event === event) {
             action.handler(args);

@@ -59,3 +59,8 @@ MatrixView.prototype.afterRender = function () {
         }
     }
 }
+
+MatrixView.prototype.afterUpdate = function () {
+    var newGameBtn = document.getElementById('newGameBtn');
+    newGameBtn.addEventListener('click', this.controller.onClickNewGame.bind(this.controller));
+};
