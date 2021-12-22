@@ -36,6 +36,7 @@ MatrixView.prototype.render = function () {
 }
 
 MatrixView.prototype.afterRender = function () {
+
     var newGameBtn = document.getElementById('newGameBtn');
     newGameBtn.addEventListener('click', this.controller.onClickNewGame.bind(this.controller));
     
@@ -61,6 +62,21 @@ MatrixView.prototype.afterRender = function () {
 }
 
 MatrixView.prototype.afterUpdate = function () {
+    // Creating newGame button
     var newGameBtn = document.getElementById('newGameBtn');
     newGameBtn.addEventListener('click', this.controller.onClickNewGame.bind(this.controller));
+
+    // Curtain setup
+    if (!this.matrixModel.attributes.gameStatus) {
+        var matrix = document.querySelector(".table");
+        var curtain = document.getElementById("curtain");
+        curtain.style.width = matrix.offsetWidth - 12 + "px";
+        curtain.style.height = matrix.offsetHeight + "px";
+        curtain.style.display = "block";
+
+        var msgText = document.getElementById('msg-text');
+        msgText.innerHTML = this.matrixModel.attributes.endGameMessage;
+        var msgButton = document.getElementById('msg-button');
+        msgButton.addEventListener('click', this.controller.onClickNewGame.bind(this.controller));
+    }
 };

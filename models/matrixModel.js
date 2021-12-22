@@ -2,7 +2,7 @@ function MatrixModel() {
     BaseModel.call(this);
     this.attributes = {
         grid: [
-            [0, 0, 0, 0],
+            [10, 10, 0, 0],
             [0, 0, 0, 0],
             [0, 0, 0, 0],
             [0, 0, 0, 0],
@@ -113,19 +113,21 @@ MatrixModel.prototype.changeAndPublish = function (calculatedMatrix, score) {
     // Publish changes if grid changed
     this.attributes.grid = calculatedMatrix;
     if (referenceString !== calculatedMatrix.toString()) {
+        this.createNewNumber();
+
+        // Checking win/loss
+        if (this.checkWin()) {
+            this.endGame('Victory!');
+        } else if (!this.attributes.grid.checkZeroes()) {
+            if (this.checkLoss()) {
+                this.endGame('You\'ve lost...');
+            }
+        }
+
+        // Applying changes
         summaryModel.attributes.totalScore += score;
         if(score !== 0) summaryModel.publish('changeScore');
-        this.createNewNumber();
         this.publish('changeData');
-    }
-
-    // Checking win/loss
-    if (this.checkWin()) {
-        this.endGame('Victory!');
-    } else if (!this.attributes.grid.checkZeroes()) {
-        if (this.checkLoss()) {
-            this.endGame('You\'ve lost...');
-        }
     }
 }
 
@@ -178,7 +180,7 @@ MatrixModel.prototype.checkLoss = function () {
 
 MatrixModel.prototype.endGame = function (message) {
     this.attributes.gameStatus = false;
-    console.log(message);
+    this.attributes.endGameMessage = message;
     var summaryModel = new SummaryModel();
     if (summaryModel.attributes.totalScore > summaryModel.attributes.bestScore) {
         summaryModel.attributes.bestScore = summaryModel.attributes.totalScore;

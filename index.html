@@ -31,7 +31,15 @@
 
 <!-- MATRIX TEMPLATE -->
 <script type="text/html" id="matrixTemplate">
-    <div class="table">{{matrix}}</div>
+    <div class="table">
+        <div id="curtain">
+            <div class="msg-container">
+                <p id="msg-text">Test</p>
+                <button id="msg-button">Play again</button>
+            </div>
+        </div>
+        {{matrix}}
+    </div>
     <div id="buttonBlock">
         <button id="newGameBtn">New Game</button>
     </div>
