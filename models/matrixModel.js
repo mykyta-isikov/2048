@@ -2,7 +2,7 @@ function MatrixModel() {
     BaseModel.call(this);
     this.attributes = {
         grid: [
-            [10, 10, 0, 0],
+            [0, 0, 0, 0],
             [0, 0, 0, 0],
             [0, 0, 0, 0],
             [0, 0, 0, 0],
