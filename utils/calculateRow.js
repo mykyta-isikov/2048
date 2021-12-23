@@ -5,7 +5,7 @@ function calculateRow(row) {
     }
 
     // getting rid of zeroes
-    var filteredRow = row.filter(elem => elem !== 0);
+    var filteredRow = row.filter(function (elem) { elem !== 0 });
 
     // calculating element "merges"
     var calculatedRow = [];

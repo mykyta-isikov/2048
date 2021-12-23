@@ -47,7 +47,7 @@ MatrixModel.prototype.moveUp = function () {
     var rotatedGrid = this.attributes.grid.rotateMatrixCC();
     var score = 0;
 
-    rotatedGrid.forEach((row) => {
+    rotatedGrid.forEach(function (row) {
         calculatedRow = calculateRow(row)
         score += calculatedRow['score'];
         newGrid.push(calculatedRow['row']);
@@ -64,7 +64,7 @@ MatrixModel.prototype.moveRight = function () {
     var rotatedGrid = this.attributes.grid.rotateMatrix().rotateMatrix();
     var score = 0;
 
-    rotatedGrid.forEach((row) => {
+    rotatedGrid.forEach(function (row) {
         calculatedRow = calculateRow(row)
         score += calculatedRow['score'];
         newGrid.push(calculatedRow['row']);
@@ -81,7 +81,7 @@ MatrixModel.prototype.moveDown = function () {
     var rotatedGrid = this.attributes.grid.rotateMatrix();
     var score = 0;
 
-    rotatedGrid.forEach((row) => {
+    rotatedGrid.forEach(function (row) {
         calculatedRow = calculateRow(row)
         score += calculatedRow['score'];
         newGrid.push(calculatedRow['row']);
@@ -97,7 +97,7 @@ MatrixModel.prototype.moveLeft = function () {
     var newGrid = [];
     var score = 0;
 
-    this.attributes.grid.forEach((row) => {
+    this.attributes.grid.forEach(function (row) {
         calculatedRow = calculateRow(row)
         score += calculatedRow['score'];
         newGrid.push(calculatedRow['row']);
@@ -164,12 +164,12 @@ MatrixModel.prototype.checkLoss = function () {
     // Checking if possible moves exist
     var score = 0;
 
-    matrixGrid.forEach((row) => {
+    matrixGrid.forEach(function (row) {
         calculatedRow = calculateRow(row)
         score += calculatedRow['score'];
     })
     matrixGrid = matrixGrid.rotateMatrix();
-    matrixGrid.forEach((row) => {
+    matrixGrid.forEach(function (row) {
         calculatedRow = calculateRow(row)
         score += calculatedRow['score'];
     })
