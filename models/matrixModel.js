@@ -115,6 +115,12 @@ MatrixModel.prototype.changeAndPublish = function (calculatedMatrix, score) {
     if (referenceString !== calculatedMatrix.toString()) {
         this.createNewNumber();
 
+        // Change and apply scoreboard
+        if (score !== 0) {
+            summaryModel.attributes.totalScore += score;
+            summaryModel.publish('changeScore');
+        } 
+
         // Checking win/loss
         if (this.checkWin()) {
             this.endGame('Victory!');
@@ -124,9 +130,7 @@ MatrixModel.prototype.changeAndPublish = function (calculatedMatrix, score) {
             }
         }
 
-        // Applying changes
-        summaryModel.attributes.totalScore += score;
-        if(score !== 0) summaryModel.publish('changeScore');
+        if (!this.attributes.gameStatus) summaryModel.publish('changeScore');
         this.publish('changeData');
     }
 }
